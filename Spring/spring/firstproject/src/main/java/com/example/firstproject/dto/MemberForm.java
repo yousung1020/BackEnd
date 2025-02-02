@@ -9,6 +9,7 @@ public class MemberForm {
     // 필드 생성
     private String email;
     private String password;
+    private Long id;
 
     // 생성자 정의
 
@@ -18,7 +19,7 @@ public class MemberForm {
 //    }
 
     public Member toEntity(){
-        return new Member(null, email, password);
+        return new Member(id, email, password);
     }
 
 }

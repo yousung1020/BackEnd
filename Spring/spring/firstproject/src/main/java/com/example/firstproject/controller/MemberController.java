@@ -21,7 +21,8 @@ import java.util.ArrayList;
 @Slf4j
 @Controller
 public class MemberController {
-    private final MemberRepository memberRepository;
+    @Autowired
+    MemberRepository memberRepository;
     public MemberController(MemberRepository memberRepository){
         this.memberRepository = memberRepository;
     }
@@ -39,7 +40,7 @@ public class MemberController {
         // 2. repository로 저장
         Member saved = memberRepository.save(member);
         log.info(saved.toString());
-        return "";
+        return "redirect:/members/" + saved.getId();
     }
 
     // 1. 레포지토리에서 id 값 가져오기
@@ -63,6 +64,34 @@ public class MemberController {
         model.addAttribute("memberList", memberEntityList);
         // 뷰 페이지 반환
         return "member/index";
+    }
+
+    // 정보 수정하기 - edit 페이지 반환
+    @GetMapping("/members/{id}/edit")
+    public String edit(@PathVariable Long id, Model model){
+        // 수정 할 데이터 가져오기
+        Member memberEntity = memberRepository.findById(id).orElse(null);
+        // 모델에 등록하기
+        model.addAttribute("member", memberEntity);
+
+        return "member/edit";
+    }
+
+    // 정보 수정하기 - 폼 데이터를 수정하기
+    @PostMapping("/members/update")
+    public String update(MemberForm form){
+        // dto를 엔티티로 변환
+        Member memberEntity = form.toEntity();
+
+        // 기존의 데이터를 가져오기
+        Member target = memberRepository.findById(memberEntity.getId()).orElse(null);
+
+        // 데이터 갱신하기
+        if (target != null){
+            Member saved = memberRepository.save(memberEntity);
+        }
+
+        return "redirect:/members/" + memberEntity.getId();
     }
 }
 
